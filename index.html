@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendanceTracker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Attendance">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-height: calc(100vh - 40px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            z-index: 2;
+        }
+
+        .language-selector select {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .language-selector select option {
+            background: #2563eb;
+            color: white;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            padding: 30px 20px;
+        }
+
+        .login-section {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-btn:active {
+            transform: scale(0.98);
+        }
+
+        .employee-info {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .employee-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .employee-branch {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .action-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .check-in {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .check-out {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .lunch-start {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .lunch-end {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .location-status {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .location-status.invalid {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .location-status.loading {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        .location-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .location-text {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .location-details {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .activity-log {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .log-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-action {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .log-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .install-prompt {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .install-prompt button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📍 <span data-translate="app_title">AttendanceTracker</span></h1>
+            <div class="language-selector">
+                <select id="languageSelect" onchange="changeLanguage()">
+                    <option value="en">🇺🇸 English</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
+            </div>
+            <div class="status-badge" id="connectionStatus" data-translate="status_connected">🟢 Connected</div>
+        </div>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="login-section">
+            <h2 style="margin-bottom: 20px;" data-translate="employee_login">Employee Login</h2>
+            <input type="email" id="employeeEmail" class="login-input" data-translate-placeholder="enter_email" placeholder="Enter your work email">
+            <button onclick="loginEmployee()" class="login-btn" data-translate="login_button">Login</button>
+        </div>
+
+        <!-- Main App Section -->
+        <div id="mainSection" class="main-content hidden">
+            <div class="install-prompt" id="installPrompt" style="display: none;">
+                📱 <span data-translate="install_prompt">Add to Home Screen for best experience</span>
+                <button onclick="installApp()" data-translate="install_button">Install</button>
+            </div>
+
+            <div class="employee-info">
+                <div class="employee-name" id="employeeName">Loading...</div>
+                <div class="employee-branch" id="employeeBranch">Loading...</div>
+            </div>
+
+            <div class="location-status loading" id="locationStatus">
+                <div class="location-icon">📍</div>
+                <div class="location-text" data-translate="checking_location">Checking location...</div>
+                <div class="location-details" id="locationDetails" data-translate="enable_location">Please enable location services</div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn check-in" onclick="recordAttendance('CheckIn')" id="checkInBtn">
+                    🏢 <span data-translate="check_in">Check In</span>
+                </button>
+                <button class="action-btn check-out" onclick="recordAttendance('CheckOut')" id="checkOutBtn">
+                    🚪 <span data-translate="check_out">Check Out</span>
+                </button>
+                <button class="action-btn lunch-start" onclick="recordAttendance('LunchStart')" id="lunchStartBtn">
+                    🍽️ <span data-translate="lunch_start">Lunch Start</span>
+                </button>
+                <button class="action-btn lunch-end" onclick="recordAttendance('LunchEnd')" id="lunchEndBtn">
+                    ↩️ <span data-translate="lunch_end">Lunch End</span>
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div data-translate="recording_attendance">Recording attendance...</div>
+            </div>
+
+            <div class="activity-log">
+                <div class="log-title" data-translate="todays_activity">📊 Today's Activity</div>
+                <div id="activityList">
+                    <div style="text-align: center; color: #6b7280; padding: 20px;" data-translate="no_activity">
+                        No activity recorded today
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ IMPORTANT: Replace this URL with your Google Apps Script Web App URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxj90VYVoxKlOCX8n-4Htkbqp7gNZq24AzfJR5bXWO8gBXo9RRK72ZnGk_7OTZXzknu/exec';
+
+        // Translation dictionary
+        const translations = {
+            en: {
+                app_title: "AttendanceTracker",
+                status_connected: "🟢 Connected",
+                status_connecting: "🔄 Connecting...",
+                status_error: "🔴 Connection Error",
+                employee_login: "Employee Login",
+                enter_email: "Enter your work email",
+                login_button: "Login",
+                install_prompt: "Add to Home Screen for best experience",
+                install_button: "Install",
+                checking_location: "Checking location...",
+                enable_location: "Please enable location services",
+                check_in: "Check In",
+                check_out: "Check Out",
+                lunch_start: "Lunch Start",
+                lunch_end: "Lunch End",
+                recording_attendance: "Recording attendance...",
+                todays_activity: "📊 Today's Activity",
+                no_activity: "No activity recorded today",
+                within_location: "Within work location",
+                outside_location: "Outside work location",
+                location_unavailable: "Location unavailable",
+                please_enter_email: "Please enter your email address",
+                location_required: "❌ Location required. Please enable GPS and try again.",
+                success_recorded: " recorded successfully!",
+                emergency_checkin: "⚠️ You are {distance}m from your work location. Only emergency check-ins are allowed from this distance. Continue?",
+                recorded_success: "Recorded ✅",
+                recorded_warning: "Recorded ⚠️"
+            },
+            es: {
+                app_title: "Control de Asistencia",
+                status_connected: "🟢 Conectado",
+                status_connecting: "🔄 Conectando...",
+                status_error: "🔴 Error de Conexión",
+                employee_login: "Inicio de Sesión",
+                enter_email: "Ingresa tu email de trabajo",
+                login_button: "Iniciar Sesión",
+                install_prompt: "Agregar a Pantalla Principal para mejor experiencia",
+                install_button: "Instalar",
+                checking_location: "Verificando ubicación...",
+                enable_location: "Por favor habilita los servicios de ubicación",
+                check_in: "Entrada",
+                check_out: "Salida",
+                lunch_start: "Inicio Almuerzo",
+                lunch_end: "Fin Almuerzo",
+                recording_attendance: "Registrando asistencia...",
+                todays_activity: "📊 Actividad de Hoy",
+                no_activity: "Sin actividad registrada hoy",
+                within_location: "Dentro del área de trabajo",
+                outside_location: "Fuera del área de trabajo",
+                location_unavailable: "Ubicación no disponible",
+                please_enter_email: "Por favor ingresa tu dirección de email",
+                location_required: "❌ Se requiere ubicación. Por favor habilita el GPS e intenta de nuevo.",
+                success_recorded: " registrado exitosamente!",
+                emergency_checkin: "⚠️ Te encuentras a {distance}m de tu lugar de trabajo. Solo se permiten registros de emergencia desde esta distancia. ¿Continuar?",
+                recorded_success: "Registrado ✅",
+                recorded_warning: "Registrado ⚠️"
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        let currentEmployee = null;
+        let currentBranch = null;
+        let currentLocation = null;
+        let deferredPrompt = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set saved language
+            document.getElementById('languageSelect').value = currentLanguage;
+            updatePageTranslations();
+            
+            // Check if user is already logged in
+            const savedEmail = localStorage.getItem('employeeEmail');
+            if (savedEmail) {
+                document.getElementById('employeeEmail').value = savedEmail;
+                // Don't auto-login, let user click login button
+            }
+
+            // Check if API URL is set
+            if (API_URL === 'REPLACE_WITH_YOUR_APPS_SCRIPT_URL') {
+                showError('⚠️ Please configure API_URL in the code with your Google Apps Script URL');
+            }
+        });
+
+        // PWA install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('installPrompt').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        function changeLanguage() {
+            currentLanguage = document.getElementById('languageSelect').value;
+            localStorage.setItem('selectedLanguage', currentLanguage);
+            updatePageTranslations();
+        }
+
+        function updatePageTranslations() {
+            const elements = document.querySelectorAll('[data-translate]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+
+            // Update placeholder text
+            const placeholderElements = document.querySelectorAll('[data-translate-placeholder]');
+            placeholderElements.forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.placeholder = translations[currentLanguage][key];
+                }
+            });
+        }
+
+        function t(key, replacements = {}) {
+            let text = translations[currentLanguage] && translations[currentLanguage][key] 
+                ? translations[currentLanguage][key] 
+                : translations['en'][key] || key;
+            
+            // Replace placeholders like {distance}
+            Object.keys(replacements).forEach(placeholder => {
+                text = text.replace(`{${placeholder}}`, replacements[placeholder]);
+            });
+            
+            return text;
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            document.querySelector('.main-content, .login-section').prepend(errorDiv);
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            document.querySelector('.main-content').prepend(successDiv);
+            setTimeout(() => successDiv.remove(), 3000);
+        }
+
+        async function loginEmployee() {
+            const email = document.getElementById('employeeEmail').value.trim();
+            
+            if (!email) {
+                alert(t('please_enter_email'));
+                return;
+            }
+
+            if (API_URL === 'REPLACE_WITH_YOUR_APPS_SCRIPT_URL') {
+                showError('Please configure the API_URL in the code first!');
+                return;
+            }
+
+            try {
+                document.getElementById('connectionStatus').textContent = t('status_connecting');
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'getEmployee',
+                        employeeEmail: email
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentEmployee = result.data.employee;
+                    currentBranch = result.data.branch;
+                    
+                    // Save login
+                    localStorage.setItem('employeeEmail', email);
+                    
+                    // Switch to main app
+                    document.getElementById('loginSection').classList.add('hidden');
+                    document.getElementById('mainSection').classList.remove('hidden');
+                    
+                    // Update UI
+                    document.getElementById('employeeName').textContent = 
+                        currentEmployee.firstName + ' ' + currentEmployee.lastName;
+                    document.getElementById('employeeBranch').textContent = currentBranch.name;
+                    
+                    // Start location tracking
+                    checkLocationPermission();
+                    loadTodaysActivity();
+                    
+                    document.getElementById('connectionStatus').textContent = t('status_connected');
+                } else {
+                    alert('❌ ' + result.message);
+                    document.getElementById('connectionStatus').textContent = t('status_error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('❌ Network error. Please check your internet connection.');
+                document.getElementById('connectionStatus').textContent = t('status_error');
+            }
+        }
+
+        function checkLocationPermission() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    updateLocationStatus,
+                    handleLocationError,
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
+                );
+            } else {
+                handleLocationError({ code: 0, message: 'Geolocation not supported' });
+            }
+        }
+
+        function updateLocationStatus(position) {
+            currentLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+                accuracy: position.coords.accuracy
+            };
+
+            const distance = calculateDistance(
+                currentLocation.lat,
+                currentLocation.lng,
+                currentBranch.latitude,
+                currentBranch.longitude
+            );
+
+            const isWithinGeofence = distance <= currentBranch.radiusMeters;
+            const locationStatus = document.getElementById('locationStatus');
+            
+            if (isWithinGeofence) {
+                locationStatus.className = 'location-status';
+                locationStatus.innerHTML = `
+                    <div class="location-icon">✅</div>
+                    <div class="location-text">${t('within_location')}</div>
+                    <div class="location-details">${Math.round(distance)}m - ${currentBranch.name}</div>
+                `;
+            } else {
+                locationStatus.className = 'location-status invalid';
+                locationStatus.innerHTML = `
+                    <div class="location-icon">❌</div>
+                    <div class="location-text">${t('outside_location')}</div>
+                    <div class="location-details">${Math.round(distance)}m - ${currentBranch.name} (>${currentBranch.radiusMeters}m)</div>
+                `;
+            }
+        }
+
+        function handleLocationError(error) {
+            console.error('Location error:', error);
+            const locationStatus = document.getElementById('locationStatus');
+            locationStatus.className = 'location-status invalid';
+            locationStatus.innerHTML = `
+                <div class="location-icon">⚠️</div>
+                <div class="location-text">${t('location_unavailable')}</div>
+                <div class="location-details">${t('enable_location')}</div>
+            `;
+        }
+
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lng2-lng1) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c;
+        }
+
+        async function recordAttendance(actionType) {
+            if (!currentLocation) {
+                alert(t('location_required'));
+                checkLocationPermission(); // Try to get location again
+                return;
+            }
+
+            const distance = calculateDistance(
+                currentLocation.lat,
+                currentLocation.lng,
+                currentBranch.latitude,
+                currentBranch.longitude
+            );
+
+            const isWithinGeofence = distance <= currentBranch.radiusMeters;
+            
+            if (!isWithinGeofence) {
+                const confirmAction = confirm(t('emergency_checkin', { distance: Math.round(distance) }));
+                if (!confirmAction) return;
+            }
+
+            // Disable buttons and show loading
+            setButtonsDisabled(true);
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'recordAttendance',
+                        employeeId: currentEmployee.id,
+                        actionType: actionType,
+                        latitude: currentLocation.lat,
+                        longitude: currentLocation.lng
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Success feedback
+                    const actionEmoji = getActionEmoji(actionType);
+                    const actionText = t(getActionKey(actionType));
+                    showSuccess(`${actionEmoji} ${actionText}${t('success_recorded')}`);
+                    
+                    // Reload today's activity
+                    loadTodaysActivity();
+                } else {
+                    alert('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Record attendance error:', error);
+                alert('❌ Network error. Please check your connection and try again.');
+            }
+            
+            // Re-enable buttons and hide loading
+            setButtonsDisabled(false);
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function setButtonsDisabled(disabled) {
+            ['checkInBtn', 'checkOutBtn', 'lunchStartBtn', 'lunchEndBtn'].forEach(id => {
+                document.getElementById(id).disabled = disabled;
+            });
+        }
+
+        function getActionKey(actionType) {
+            const keys = {
+                'CheckIn': 'check_in',
+                'CheckOut': 'check_out',
+                'LunchStart': 'lunch_start',
+                'LunchEnd': 'lunch_end'
+            };
+            return keys[actionType] || actionType;
+        }
+
+        function getActionEmoji(actionType) {
+            const emojis = {
+                'CheckIn': '🏢',
+                'CheckOut': '🚪',
+                'LunchStart': '🍽️',
+                'LunchEnd': '↩️'
+            };
+            return emojis[actionType] || '📝';
+        }
+
+        async function loadTodaysActivity() {
+            if (!currentEmployee) return;
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'getTodaysActivity',
+                        employeeId: currentEmployee.id
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateActivityLog(result.data.activity);
+                }
+            } catch (error) {
+                console.error('Load activity error:', error);
+            }
+        }
+
+        function updateActivityLog(activities) {
+            const activityList = document.getElementById('activityList');
+            
+            if (activities.length === 0) {
+                activityList.innerHTML = `
+                    <div style="text-align: center; color: #6b7280; padding: 20px;">
+                        ${t('no_activity')}
+                    </div>
+                `;
+                return;
+            }
+
+            activityList.innerHTML = activities.map(item => `
+                <div class="log-item">
+                    <div class="log-action">${t(getActionKey(item.action))}</div>
+                    <div class="log-time">${item.status.includes('✅') ? t('recorded_success') : t('recorded_warning')}</div>
+                </div>
+            `).join('');
+        }
+
+        // Auto-refresh location every 60 seconds
+        setInterval(() => {
+            if (currentEmployee) {
+                checkLocationPermission();
+            }
+        }, 60000);
+
+        // Service Worker registration for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>
