@@ -4,18 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AttendanceTracker</title>
-    <meta name="theme-color" content="#2563eb">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Attendance">
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -42,35 +33,16 @@
             position: relative;
         }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-
         .header h1 {
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
         }
 
         .language-selector {
             position: absolute;
             top: 10px;
             right: 15px;
-            z-index: 2;
         }
 
         .language-selector select {
@@ -80,13 +52,6 @@
             border-radius: 20px;
             padding: 5px 10px;
             font-size: 12px;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-        }
-
-        .language-selector select option {
-            background: #2563eb;
-            color: white;
         }
 
         .status-badge {
@@ -96,13 +61,6 @@
             border-radius: 20px;
             font-size: 14px;
             font-weight: 500;
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1;
-        }
-
-        .main-content {
-            padding: 30px 20px;
         }
 
         .login-section {
@@ -129,11 +87,21 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
         }
 
-        .login-btn:active {
-            transform: scale(0.98);
+        .debug-box {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            text-align: left;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .main-app {
+            padding: 30px 20px;
+            display: none;
         }
 
         .employee-info {
@@ -142,18 +110,6 @@
             padding: 20px;
             margin-bottom: 30px;
             border: 1px solid #e2e8f0;
-        }
-
-        .employee-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 5px;
-        }
-
-        .employee-branch {
-            color: #64748b;
-            font-size: 14px;
         }
 
         .action-buttons {
@@ -170,55 +126,14 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            color: white;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .action-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.5s ease;
-        }
-
-        .action-btn:active::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .check-in {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-
-        .check-out {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-        }
-
-        .lunch-start {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-        }
-
-        .lunch-end {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            color: white;
-        }
+        .check-in { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .check-out { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .lunch-start { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .lunch-end { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
 
         .location-status {
             background: #f0f9ff;
@@ -227,32 +142,11 @@
             padding: 20px;
             margin-bottom: 20px;
             text-align: center;
-            transition: all 0.3s ease;
         }
 
         .location-status.invalid {
             background: #fef2f2;
             border-color: #ef4444;
-        }
-
-        .location-status.loading {
-            background: #f9fafb;
-            border-color: #9ca3af;
-        }
-
-        .location-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .location-text {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .location-details {
-            font-size: 12px;
-            color: #64748b;
         }
 
         .activity-log {
@@ -261,157 +155,73 @@
             padding: 20px;
         }
 
-        .log-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #1e293b;
-        }
-
-        .log-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .log-item:last-child {
-            border-bottom: none;
-        }
-
-        .log-action {
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .log-time {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #2563eb;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .error-message {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .success-message {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+        .hidden { display: none !important; }
 
         @media (max-width: 480px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-            }
-            
-            body {
-                padding: 0;
-            }
+            .container { margin: 0; border-radius: 0; min-height: 100vh; }
+            body { padding: 0; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📍 <span data-translate="app_title">AttendanceTracker</span></h1>
+            <h1 id="appTitle">📍 AttendanceTracker</h1>
             <div class="language-selector">
                 <select id="languageSelect" onchange="changeLanguage()">
                     <option value="en">🇺🇸 English</option>
                     <option value="es">🇪🇸 Español</option>
                 </select>
             </div>
-            <div class="status-badge" id="connectionStatus" data-translate="status_connected">🟢 Connected</div>
+            <div class="status-badge" id="statusBadge">🟢 Connected</div>
         </div>
 
         <!-- Login Section -->
         <div id="loginSection" class="login-section">
-            <h2 style="margin-bottom: 20px;" data-translate="employee_login">Employee Login</h2>
-            <input type="email" id="employeeEmail" class="login-input" data-translate-placeholder="enter_email" placeholder="Enter your work email">
-            <button onclick="loginEmployee()" class="login-btn" data-translate="login_button">Login</button>
+            <h2 id="loginTitle">Employee Login</h2>
+            <input type="email" id="employeeEmail" class="login-input" placeholder="Enter your work email" value="soberaniscarlos@gmail.com">
+            <button onclick="attemptLogin()" class="login-btn" id="loginBtn">Login</button>
             
-            <!-- Debug Info -->
-            <div id="debugInfo" style="margin-top: 20px; font-size: 12px; color: #666; text-align: left; background: #f5f5f5; padding: 10px; border-radius: 5px;">
+            <div class="debug-box">
                 <strong>Debug Info:</strong><br>
-                API Status: <span id="apiStatus">Checking...</span><br>
-                Last Error: <span id="lastError">None</span>
+                API Status: <span id="apiStatus">Not checked</span><br>
+                Last Error: <span id="lastError">None</span><br>
+                API URL: <span id="apiUrl">Not set</span>
             </div>
         </div>
 
         <!-- Main App Section -->
-        <div id="mainSection" class="main-content hidden">
+        <div id="mainApp" class="main-app">
             <div class="employee-info">
-                <div class="employee-name" id="employeeName">Loading...</div>
-                <div class="employee-branch" id="employeeBranch">Loading...</div>
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 5px;" id="employeeName">Loading...</div>
+                <div style="color: #64748b; font-size: 14px;" id="employeeBranch">Loading...</div>
             </div>
 
-            <div class="location-status loading" id="locationStatus">
-                <div class="location-icon">📍</div>
-                <div class="location-text" data-translate="checking_location">Checking location...</div>
-                <div class="location-details" id="locationDetails" data-translate="enable_location">Please enable location services</div>
+            <div class="location-status" id="locationStatus">
+                <div style="font-size: 24px; margin-bottom: 10px;">📍</div>
+                <div style="font-weight: 600; margin-bottom: 5px;" id="locationText">Checking location...</div>
+                <div style="font-size: 12px; color: #64748b;" id="locationDetails">Please enable location services</div>
             </div>
 
             <div class="action-buttons">
-                <button class="action-btn check-in" onclick="recordAttendance('CheckIn')" id="checkInBtn">
-                    🏢 <span data-translate="check_in">Check In</span>
+                <button class="action-btn check-in" onclick="recordAttendance('CheckIn')">
+                    🏢 <span id="checkInText">Check In</span>
                 </button>
-                <button class="action-btn check-out" onclick="recordAttendance('CheckOut')" id="checkOutBtn">
-                    🚪 <span data-translate="check_out">Check Out</span>
+                <button class="action-btn check-out" onclick="recordAttendance('CheckOut')">
+                    🚪 <span id="checkOutText">Check Out</span>
                 </button>
-                <button class="action-btn lunch-start" onclick="recordAttendance('LunchStart')" id="lunchStartBtn">
-                    🍽️ <span data-translate="lunch_start">Lunch Start</span>
+                <button class="action-btn lunch-start" onclick="recordAttendance('LunchStart')">
+                    🍽️ <span id="lunchStartText">Lunch Start</span>
                 </button>
-                <button class="action-btn lunch-end" onclick="recordAttendance('LunchEnd')" id="lunchEndBtn">
-                    ↩️ <span data-translate="lunch_end">Lunch End</span>
+                <button class="action-btn lunch-end" onclick="recordAttendance('LunchEnd')">
+                    ↩️ <span id="lunchEndText">Lunch End</span>
                 </button>
-            </div>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <div data-translate="recording_attendance">Recording attendance...</div>
             </div>
 
             <div class="activity-log">
-                <div class="log-title" data-translate="todays_activity">📊 Today's Activity</div>
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 15px;" id="activityTitle">📊 Today's Activity</div>
                 <div id="activityList">
-                    <div style="text-align: center; color: #6b7280; padding: 20px;" data-translate="no_activity">
+                    <div style="text-align: center; color: #6b7280; padding: 20px;" id="noActivityText">
                         No activity recorded today
                     </div>
                 </div>
@@ -420,47 +230,255 @@
     </div>
 
     <script>
-        // ⚠️ CRITICAL: Replace this URL with your Google Apps Script Web App URL
+        // 🚨 REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT URL
         const API_URL = 'https://script.google.com/macros/s/AKfycbwBZJcbm3ok_JiJWTm8JSt0IV70p_99cp1Qs-U_6L4muQoMuuiCJN2rleAmCBRj5N74/exec';
-
-        // Translation dictionary
-        const translations = {
+        
+        // Simple translations
+        const lang = {
             en: {
-                app_title: "AttendanceTracker",
-                status_connected: "🟢 Connected",
-                status_connecting: "🔄 Connecting...",
-                status_error: "🔴 Connection Error",
-                employee_login: "Employee Login",
-                enter_email: "Enter your work email",
-                login_button: "Login",
-                checking_location: "Checking location...",
-                enable_location: "Please enable location services",
-                check_in: "Check In",
-                check_out: "Check Out",
-                lunch_start: "Lunch Start",
-                lunch_end: "Lunch End",
-                recording_attendance: "Recording attendance...",
-                todays_activity: "📊 Today's Activity",
-                no_activity: "No activity recorded today",
-                within_location: "Within work location",
-                outside_location: "Outside work location",
-                location_unavailable: "Location unavailable",
-                please_enter_email: "Please enter your email address",
-                location_required: "❌ Location required. Please enable GPS and try again.",
-                success_recorded: " recorded successfully!",
-                emergency_checkin: "⚠️ You are {distance}m from your work location. Only emergency check-ins are allowed from this distance. Continue?",
-                recorded_success: "Recorded ✅",
-                recorded_warning: "Recorded ⚠️"
+                appTitle: 'AttendanceTracker',
+                loginTitle: 'Employee Login',
+                checkInText: 'Check In',
+                checkOutText: 'Check Out',
+                lunchStartText: 'Lunch Start',
+                lunchEndText: 'Lunch End',
+                activityTitle: '📊 Today\'s Activity',
+                noActivityText: 'No activity recorded today',
+                locationChecking: 'Checking location...',
+                withinLocation: 'Within work location',
+                outsideLocation: 'Outside work location',
+                statusConnected: '🟢 Connected',
+                statusConnecting: '🔄 Connecting...',
+                statusError: '🔴 Error'
             },
             es: {
-                app_title: "Control de Asistencia",
-                status_connected: "🟢 Conectado",
-                status_connecting: "🔄 Conectando...",
-                status_error: "🔴 Error de Conexión",
-                employee_login: "Inicio de Sesión",
-                enter_email: "Ingresa tu email de trabajo",
-                login_button: "Iniciar Sesión",
-                checking_location: "Verificando ubicación...",
-                enable_location: "Por favor habilita los servicios de ubicación",
-                check_in: "Entrada",
-                check_out
+                appTitle: 'Control de Asistencia',
+                loginTitle: 'Inicio de Sesión',
+                checkInText: 'Entrada',
+                checkOutText: 'Salida',
+                lunchStartText: 'Inicio Almuerzo',
+                lunchEndText: 'Fin Almuerzo',
+                activityTitle: '📊 Actividad de Hoy',
+                noActivityText: 'Sin actividad registrada hoy',
+                locationChecking: 'Verificando ubicación...',
+                withinLocation: 'Dentro del área de trabajo',
+                outsideLocation: 'Fuera del área de trabajo',
+                statusConnected: '🟢 Conectado',
+                statusConnecting: '🔄 Conectando...',
+                statusError: '🔴 Error'
+            }
+        };
+
+        let currentLang = 'en';
+        let currentEmployee = null;
+        let currentBranch = null;
+        let currentLocation = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('App starting...');
+            updateDebugInfo();
+            checkAPI();
+        });
+
+        function updateDebugInfo() {
+            document.getElementById('apiUrl').textContent = API_URL;
+            
+            if (API_URL === 'REPLACE_WITH_YOUR_GOOGLE_APPS_SCRIPT_URL') {
+                document.getElementById('apiStatus').textContent = '❌ Not configured';
+                document.getElementById('lastError').textContent = 'Please set your Google Apps Script URL';
+            } else {
+                document.getElementById('apiStatus').textContent = '✅ URL set';
+            }
+        }
+
+        async function checkAPI() {
+            if (API_URL === 'REPLACE_WITH_YOUR_GOOGLE_APPS_SCRIPT_URL') {
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL + '?action=test');
+                const text = await response.text();
+                
+                if (text.includes('working')) {
+                    document.getElementById('apiStatus').textContent = '✅ API Working';
+                    document.getElementById('lastError').textContent = 'None';
+                } else {
+                    document.getElementById('apiStatus').textContent = '⚠️ Unexpected response';
+                    document.getElementById('lastError').textContent = 'API response: ' + text.substring(0, 50);
+                }
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = '❌ Connection failed';
+                document.getElementById('lastError').textContent = error.message;
+            }
+        }
+
+        function changeLanguage() {
+            currentLang = document.getElementById('languageSelect').value;
+            console.log('Language changed to:', currentLang);
+            
+            // Update all text elements
+            Object.keys(lang[currentLang]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = lang[currentLang][key];
+                }
+            });
+            
+            // Update placeholder
+            const emailInput = document.getElementById('employeeEmail');
+            emailInput.placeholder = currentLang === 'es' ? 'Ingresa tu email de trabajo' : 'Enter your work email';
+        }
+
+        async function attemptLogin() {
+            const email = document.getElementById('employeeEmail').value.trim();
+            console.log('Login attempt for:', email);
+            
+            if (!email) {
+                alert(currentLang === 'es' ? 'Por favor ingresa tu email' : 'Please enter your email');
+                return;
+            }
+
+            if (API_URL === 'REPLACE_WITH_YOUR_GOOGLE_APPS_SCRIPT_URL') {
+                alert('❌ API not configured! Check the code.');
+                return;
+            }
+
+            document.getElementById('statusBadge').textContent = lang[currentLang].statusConnecting;
+            document.getElementById('loginBtn').textContent = currentLang === 'es' ? 'Conectando...' : 'Connecting...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'getEmployee',
+                        employeeEmail: email
+                    })
+                });
+
+                const result = await response.json();
+                console.log('Login response:', result);
+
+                if (result.success) {
+                    currentEmployee = result.data.employee;
+                    currentBranch = result.data.branch;
+                    
+                    // Switch to main app
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('mainApp').style.display = 'block';
+                    
+                    // Update UI
+                    document.getElementById('employeeName').textContent = 
+                        currentEmployee.firstName + ' ' + currentEmployee.lastName;
+                    document.getElementById('employeeBranch').textContent = currentBranch.name;
+                    
+                    document.getElementById('statusBadge').textContent = lang[currentLang].statusConnected;
+                    
+                    // Start location check
+                    getLocation();
+                    
+                } else {
+                    alert('❌ ' + result.message);
+                    document.getElementById('statusBadge').textContent = lang[currentLang].statusError;
+                    document.getElementById('lastError').textContent = result.message;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('❌ Network error: ' + error.message);
+                document.getElementById('statusBadge').textContent = lang[currentLang].statusError;
+                document.getElementById('lastError').textContent = error.message;
+            }
+
+            document.getElementById('loginBtn').textContent = currentLang === 'es' ? 'Iniciar Sesión' : 'Login';
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updateLocationStatus, locationError);
+            } else {
+                locationError();
+            }
+        }
+
+        function updateLocationStatus(position) {
+            currentLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            const distance = calculateDistance(
+                currentLocation.lat, currentLocation.lng,
+                currentBranch.latitude, currentBranch.longitude
+            );
+
+            const isWithin = distance <= currentBranch.radiusMeters;
+            const locationStatus = document.getElementById('locationStatus');
+            
+            if (isWithin) {
+                locationStatus.className = 'location-status';
+                document.getElementById('locationText').textContent = lang[currentLang].withinLocation;
+                document.getElementById('locationDetails').textContent = Math.round(distance) + 'm - ' + currentBranch.name;
+            } else {
+                locationStatus.className = 'location-status invalid';
+                document.getElementById('locationText').textContent = lang[currentLang].outsideLocation;
+                document.getElementById('locationDetails').textContent = Math.round(distance) + 'm - ' + currentBranch.name;
+            }
+        }
+
+        function locationError() {
+            document.getElementById('locationText').textContent = 'Location unavailable';
+            document.getElementById('locationDetails').textContent = 'Please enable GPS';
+        }
+
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371e3;
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lng2-lng1) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c;
+        }
+
+        async function recordAttendance(actionType) {
+            if (!currentLocation) {
+                alert(currentLang === 'es' ? 'Se requiere ubicación' : 'Location required');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'recordAttendance',
+                        employeeId: currentEmployee.id,
+                        actionType: actionType,
+                        latitude: currentLocation.lat,
+                        longitude: currentLocation.lng
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ ' + (currentLang === 'es' ? 'Registrado exitosamente' : 'Recorded successfully'));
+                } else {
+                    alert('❌ Error: ' + result.message);
+                }
+            } catch (error) {
+                alert('❌ Network error: ' + error.message);
+            }
+        }
+
+        console.log('Attendance Tracker Simple v1.0 - Ready');
+    </script>
+</body>
+</html>
