@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AttendanceTracker</title>
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -312,28 +311,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        .install-prompt {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .install-prompt button {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            margin-left: 10px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
         .hidden {
             display: none !important;
         }
@@ -389,15 +366,17 @@
             <h2 style="margin-bottom: 20px;" data-translate="employee_login">Employee Login</h2>
             <input type="email" id="employeeEmail" class="login-input" data-translate-placeholder="enter_email" placeholder="Enter your work email">
             <button onclick="loginEmployee()" class="login-btn" data-translate="login_button">Login</button>
+            
+            <!-- Debug Info -->
+            <div id="debugInfo" style="margin-top: 20px; font-size: 12px; color: #666; text-align: left; background: #f5f5f5; padding: 10px; border-radius: 5px;">
+                <strong>Debug Info:</strong><br>
+                API Status: <span id="apiStatus">Checking...</span><br>
+                Last Error: <span id="lastError">None</span>
+            </div>
         </div>
 
         <!-- Main App Section -->
         <div id="mainSection" class="main-content hidden">
-            <div class="install-prompt" id="installPrompt" style="display: none;">
-                📱 <span data-translate="install_prompt">Add to Home Screen for best experience</span>
-                <button onclick="installApp()" data-translate="install_button">Install</button>
-            </div>
-
             <div class="employee-info">
                 <div class="employee-name" id="employeeName">Loading...</div>
                 <div class="employee-branch" id="employeeBranch">Loading...</div>
@@ -441,8 +420,8 @@
     </div>
 
     <script>
-        // ⚠️ IMPORTANT: Replace this URL with your NEW Google Apps Script Web App URL
-        const API_URL = 'https://script.google.com/macros/s/AKfycbysi8-0eBye_QVj0ZIgWvgRLQkL7dfim-qpy9wKWENmP0s-Ze-QZRFhl_omDtRwAYtx/exec';
+        // ⚠️ CRITICAL: Replace this URL with your Google Apps Script Web App URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwBZJcbm3ok_JiJWTm8JSt0IV70p_99cp1Qs-U_6L4muQoMuuiCJN2rleAmCBRj5N74/exec';
 
         // Translation dictionary
         const translations = {
@@ -454,8 +433,6 @@
                 employee_login: "Employee Login",
                 enter_email: "Enter your work email",
                 login_button: "Login",
-                install_prompt: "Add to Home Screen for best experience",
-                install_button: "Install",
                 checking_location: "Checking location...",
                 enable_location: "Please enable location services",
                 check_in: "Check In",
@@ -480,4 +457,10 @@
                 status_connected: "🟢 Conectado",
                 status_connecting: "🔄 Conectando...",
                 status_error: "🔴 Error de Conexión",
-                employee_login: "
+                employee_login: "Inicio de Sesión",
+                enter_email: "Ingresa tu email de trabajo",
+                login_button: "Iniciar Sesión",
+                checking_location: "Verificando ubicación...",
+                enable_location: "Por favor habilita los servicios de ubicación",
+                check_in: "Entrada",
+                check_out
